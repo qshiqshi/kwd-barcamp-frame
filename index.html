@@ -68,65 +68,12 @@
     z-index: 1;
   }
 
-  .container {
+  .upload-section {
+    padding: 1.2rem 1rem 0.5rem;
     width: 100%;
-    max-width: 540px;
-    padding: 1.5rem 1rem 3rem;
+    max-width: 900px;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1.2rem;
-  }
-
-  .canvas-wrapper {
-    width: 100%;
-    aspect-ratio: 1;
-    background: #e0d6e8;
-    border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    cursor: grab;
-    touch-action: none;
-    box-shadow: 0 4px 20px rgba(122, 0, 223, 0.15);
-  }
-
-  .canvas-wrapper:active { cursor: grabbing; }
-
-  .canvas-wrapper canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-  }
-
-  .placeholder {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
-    gap: 0.8rem;
-    color: #7a00df;
-    pointer-events: none;
-    transition: opacity 0.3s;
-  }
-
-  .placeholder.hidden { opacity: 0; pointer-events: none; }
-
-  .placeholder svg { width: 48px; height: 48px; opacity: 0.5; }
-
-  .placeholder span {
-    font-size: 0.95rem;
-    opacity: 0.7;
-    text-align: center;
-    padding: 0 1rem;
-  }
-
-  .controls {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
   }
 
   .btn {
@@ -158,6 +105,8 @@
     background: #f27549;
     color: #fff;
     box-shadow: 0 3px 12px rgba(242, 117, 73, 0.3);
+    font-size: 0.85rem;
+    padding: 0.6rem 1rem;
   }
 
   .btn-download:hover { box-shadow: 0 5px 20px rgba(242, 117, 73, 0.4); }
@@ -168,17 +117,98 @@
     cursor: not-allowed;
   }
 
+  .panels {
+    width: 100%;
+    max-width: 900px;
+    padding: 1rem;
+    display: flex;
+    gap: 1.2rem;
+    align-items: flex-start;
+    justify-content: center;
+  }
+
+  .panel {
+    flex: 1;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.7rem;
+  }
+
+  .panel-label {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #7a00df;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .canvas-wrapper {
+    width: 100%;
+    background: #e0d6e8;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+    box-shadow: 0 4px 20px rgba(122, 0, 223, 0.15);
+  }
+
+  .canvas-wrapper:active { cursor: grabbing; }
+
+  .canvas-wrapper.ratio-1 { aspect-ratio: 1; }
+  .canvas-wrapper.ratio-916 { aspect-ratio: 9/16; }
+
+  .canvas-wrapper canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    color: #7a00df;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .placeholder.hidden { opacity: 0; }
+
+  .placeholder svg { width: 40px; height: 40px; opacity: 0.5; }
+
+  .placeholder span {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-align: center;
+    padding: 0 0.5rem;
+  }
+
+  .panel-controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .zoom-row {
     display: flex;
     align-items: center;
-    gap: 0.8rem;
+    gap: 0.6rem;
   }
 
   .zoom-row label {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #666;
     white-space: nowrap;
-    min-width: 44px;
+    min-width: 38px;
   }
 
   .zoom-row input[type="range"] {
@@ -188,7 +218,7 @@
   }
 
   .hint {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: #999;
     text-align: center;
     line-height: 1.4;
@@ -204,16 +234,13 @@
     text-align: center;
   }
 
-  .btn-row {
-    display: flex;
-    gap: 0.6rem;
-  }
-
-  .btn-row .btn { flex: 1; }
-
-  @media (max-width: 400px) {
+  @media (max-width: 700px) {
+    .panels {
+      flex-direction: column;
+      align-items: center;
+    }
+    .panel { max-width: 360px; }
     .header h1 { font-size: 1.4rem; }
-    .container { padding: 1rem 0.75rem 2rem; }
   }
 </style>
 </head>
@@ -224,294 +251,294 @@
   <p>Erstelle deinen persönlichen Teilnehmer-Frame!</p>
 </div>
 
-<div class="container">
-  <div class="canvas-wrapper" id="canvasWrapper">
-    <canvas id="canvas" width="1080" height="1080"></canvas>
-    <div class="placeholder" id="placeholder">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-        <rect x="3" y="3" width="18" height="18" rx="2"/>
-        <circle cx="8.5" cy="8.5" r="1.5"/>
-        <path d="M21 15l-5-5L5 21"/>
-      </svg>
-      <span>Foto hochladen oder hierher ziehen</span>
-    </div>
-  </div>
-
-  <div class="controls">
-    <div class="btn-row">
-      <button class="btn btn-upload" id="btnUpload">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
-        Foto wählen
-      </button>
-      <button class="btn btn-download" id="btnDownload" disabled>
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
-        PNG laden
-      </button>
-    </div>
-
-    <div class="zoom-row">
-      <label>Zoom</label>
-      <input type="range" id="zoomSlider" min="50" max="300" value="100" step="1">
-    </div>
-
-    <p class="hint">Bild per Drag verschieben &middot; Zoom per Slider &middot; Export: 1080&times;1080 px</p>
-  </div>
-
+<div class="upload-section">
+  <button class="btn btn-upload" id="btnUpload">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+    Foto wählen
+  </button>
   <input type="file" accept="image/*" class="hidden-input" id="fileInput">
 </div>
+
+<div class="panels">
+  <!-- 1:1 Panel -->
+  <div class="panel">
+    <span class="panel-label">1:1 &middot; LinkedIn Post</span>
+    <div class="canvas-wrapper ratio-1" id="wrap1" data-key="sq">
+      <canvas id="canvasSq" width="1080" height="1080"></canvas>
+      <div class="placeholder" id="placeholderSq">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        <span>1080 &times; 1080</span>
+      </div>
+    </div>
+    <div class="panel-controls">
+      <div class="zoom-row">
+        <label>Zoom</label>
+        <input type="range" id="zoomSq" min="50" max="300" value="100" step="1">
+      </div>
+      <button class="btn btn-download" id="dlSq" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        PNG 1080&times;1080
+      </button>
+    </div>
+  </div>
+
+  <!-- 9:16 Panel -->
+  <div class="panel">
+    <span class="panel-label">9:16 &middot; Story / Reel</span>
+    <div class="canvas-wrapper ratio-916" id="wrap916" data-key="vt">
+      <canvas id="canvasVt" width="1080" height="1920"></canvas>
+      <div class="placeholder" id="placeholderVt">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="3" width="18" height="18" rx="2"/>
+          <circle cx="8.5" cy="8.5" r="1.5"/>
+          <path d="M21 15l-5-5L5 21"/>
+        </svg>
+        <span>1080 &times; 1920</span>
+      </div>
+    </div>
+    <div class="panel-controls">
+      <div class="zoom-row">
+        <label>Zoom</label>
+        <input type="range" id="zoomVt" min="50" max="300" value="100" step="1">
+      </div>
+      <button class="btn btn-download" id="dlVt" disabled>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        PNG 1080&times;1920
+      </button>
+    </div>
+  </div>
+</div>
+
+<p class="hint">Bild per Drag verschieben &middot; Zoom per Slider &middot; Beide Formate unabh&auml;ngig anpassbar</p>
 
 <div class="footer">Deine Bilder bleiben in deinem Browser &ndash; nichts wird hochgeladen.</div>
 
 <script>
 (function() {
-  const SIZE = 1080;
-  const canvas = document.getElementById('canvas');
-  const ctx = canvas.getContext('2d');
-  const wrapper = document.getElementById('canvasWrapper');
-  const placeholder = document.getElementById('placeholder');
-  const fileInput = document.getElementById('fileInput');
-  const btnUpload = document.getElementById('btnUpload');
-  const btnDownload = document.getElementById('btnDownload');
-  const zoomSlider = document.getElementById('zoomSlider');
+  // --- State per canvas ---
+  function createEditor(canvasId, wrapperId, placeholderId, zoomId, dlId, W, H, filename) {
+    const canvas = document.getElementById(canvasId);
+    const ctx = canvas.getContext('2d');
+    const wrapper = document.getElementById(wrapperId);
+    const placeholder = document.getElementById(placeholderId);
+    const zoomSlider = document.getElementById(zoomId);
+    const dlBtn = document.getElementById(dlId);
 
-  let img = null;
-  let imgX = 0, imgY = 0;
-  let imgScale = 1;
-  let baseScale = 1;
-  let dragging = false;
-  let dragStartX = 0, dragStartY = 0;
-  let imgStartX = 0, imgStartY = 0;
+    let img = null;
+    let imgX = 0, imgY = 0, imgScale = 100, baseScale = 1;
+    let dragging = false, dragStartX = 0, dragStartY = 0, imgStartX = 0, imgStartY = 0;
 
-  // --- Frame drawing (SVG-based, drawn directly on canvas) ---
-  function drawFrame(ctx) {
-    const S = SIZE;
-    const border = 80;
+    function drawFrame(ctx) {
+      const border = 80;
+      ctx.save();
 
-    // Semi-transparent border bands
-    ctx.save();
+      // Top band
+      ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
+      ctx.fillRect(0, 0, W, border + 20);
 
-    // Top band
-    ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
-    ctx.fillRect(0, 0, S, border + 20);
+      // Bottom band
+      ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
+      ctx.fillRect(0, H - border - 30, W, border + 30);
 
-    // Bottom band
-    ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
-    ctx.fillRect(0, S - border - 30, S, border + 30);
+      // Left strip
+      ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
+      ctx.fillRect(0, border + 20, 18, H - border * 2 - 50);
 
-    // Left strip
-    ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
-    ctx.fillRect(0, border + 20, 18, S - border * 2 - 50);
+      // Right strip
+      ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
+      ctx.fillRect(W - 18, border + 20, 18, H - border * 2 - 50);
 
-    // Right strip
-    ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
-    ctx.fillRect(S - 18, border + 20, 18, S - border * 2 - 50);
+      // Geometric decorations
+      ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
+      ctx.beginPath(); ctx.arc(90, 50, 32, 0, Math.PI * 2); ctx.fill();
 
-    // --- Geometric decorations ---
-    // Top-left circle (orange)
-    ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
-    ctx.beginPath();
-    ctx.arc(90, 50, 32, 0, Math.PI * 2);
-    ctx.fill();
+      ctx.fillStyle = 'rgba(228, 252, 154, 0.9)';
+      ctx.save(); ctx.translate(W - 90, 50); ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-20, -20, 40, 40); ctx.restore();
 
-    // Top-right diamond (yellow-green)
-    ctx.fillStyle = 'rgba(228, 252, 154, 0.9)';
-    ctx.save();
-    ctx.translate(S - 90, 50);
-    ctx.rotate(Math.PI / 4);
-    ctx.fillRect(-20, -20, 40, 40);
-    ctx.restore();
+      ctx.fillStyle = 'rgba(38, 141, 227, 0.8)';
+      ctx.save(); ctx.translate(80, H - 55); ctx.rotate(Math.PI / 4);
+      ctx.fillRect(-18, -18, 36, 36); ctx.restore();
 
-    // Bottom-left diamond (blue)
-    ctx.fillStyle = 'rgba(38, 141, 227, 0.8)';
-    ctx.save();
-    ctx.translate(80, S - 55);
-    ctx.rotate(Math.PI / 4);
-    ctx.fillRect(-18, -18, 36, 36);
-    ctx.restore();
+      ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
+      ctx.beginPath(); ctx.arc(W - 80, H - 55, 28, 0, Math.PI * 2); ctx.fill();
 
-    // Bottom-right circle (orange)
-    ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
-    ctx.beginPath();
-    ctx.arc(S - 80, S - 55, 28, 0, Math.PI * 2);
-    ctx.fill();
+      // Accent dots
+      ctx.fillStyle = 'rgba(228, 252, 154, 0.7)';
+      ctx.beginPath(); ctx.arc(W / 2 - 160, 50, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(38, 141, 227, 0.6)';
+      ctx.beginPath(); ctx.arc(W / 2 + 160, 50, 10, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(228, 252, 154, 0.6)';
+      ctx.beginPath(); ctx.arc(W / 2 + 120, H - 55, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = 'rgba(38, 141, 227, 0.5)';
+      ctx.beginPath(); ctx.arc(W / 2 - 120, H - 55, 8, 0, Math.PI * 2); ctx.fill();
 
-    // Small accent dots
-    ctx.fillStyle = 'rgba(228, 252, 154, 0.7)';
-    ctx.beginPath();
-    ctx.arc(S / 2 - 160, 50, 10, 0, Math.PI * 2);
-    ctx.fill();
+      // Extra decorations for 9:16 (more vertical space)
+      if (H > W) {
+        // Mid-left circle
+        ctx.fillStyle = 'rgba(242, 117, 73, 0.4)';
+        ctx.beginPath(); ctx.arc(30, H * 0.35, 22, 0, Math.PI * 2); ctx.fill();
+        // Mid-right diamond
+        ctx.fillStyle = 'rgba(228, 252, 154, 0.4)';
+        ctx.save(); ctx.translate(W - 30, H * 0.65); ctx.rotate(Math.PI / 4);
+        ctx.fillRect(-16, -16, 32, 32); ctx.restore();
+      }
 
-    ctx.fillStyle = 'rgba(38, 141, 227, 0.6)';
-    ctx.beginPath();
-    ctx.arc(S / 2 + 160, 50, 10, 0, Math.PI * 2);
-    ctx.fill();
+      // Text
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-    ctx.fillStyle = 'rgba(228, 252, 154, 0.6)';
-    ctx.beginPath();
-    ctx.arc(S / 2 + 120, S - 55, 8, 0, Math.PI * 2);
-    ctx.fill();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = '800 44px Poppins, sans-serif';
+      ctx.fillText('KWD BARCAMP 2026', W / 2, 55);
 
-    ctx.fillStyle = 'rgba(38, 141, 227, 0.5)';
-    ctx.beginPath();
-    ctx.arc(S / 2 - 120, S - 55, 8, 0, Math.PI * 2);
-    ctx.fill();
+      ctx.fillStyle = '#e4fc9a';
+      ctx.font = '800 48px Poppins, sans-serif';
+      ctx.fillText('ICH BIN DABEI!', W / 2, H - 52);
 
-    // --- Text ---
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // Top: "KWD BARCAMP 2026"
-    ctx.fillStyle = '#ffffff';
-    ctx.font = '800 44px Poppins, sans-serif';
-    ctx.fillText('KWD BARCAMP 2026', S / 2, 55);
-
-    // Bottom: "ICH BIN DABEI!"
-    ctx.fillStyle = '#e4fc9a';
-    ctx.font = '800 48px Poppins, sans-serif';
-    ctx.fillText('ICH BIN DABEI!', S / 2, S - 52);
-
-    ctx.restore();
-  }
-
-  // --- Render ---
-  function render() {
-    ctx.clearRect(0, 0, SIZE, SIZE);
-
-    // Background
-    ctx.fillStyle = '#e0d6e8';
-    ctx.fillRect(0, 0, SIZE, SIZE);
-
-    if (img) {
-      const scale = baseScale * (imgScale / 100);
-      const w = img.naturalWidth * scale;
-      const h = img.naturalHeight * scale;
-      ctx.drawImage(img, imgX, imgY, w, h);
+      ctx.restore();
     }
 
-    drawFrame(ctx);
+    function render() {
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = '#e0d6e8';
+      ctx.fillRect(0, 0, W, H);
+
+      if (img) {
+        const scale = baseScale * (imgScale / 100);
+        const w = img.naturalWidth * scale;
+        const h = img.naturalHeight * scale;
+        ctx.drawImage(img, imgX, imgY, w, h);
+      }
+
+      drawFrame(ctx);
+    }
+
+    function setImage(image) {
+      img = image;
+      const scaleW = W / img.naturalWidth;
+      const scaleH = H / img.naturalHeight;
+      baseScale = Math.max(scaleW, scaleH);
+      imgScale = 100;
+      zoomSlider.value = 100;
+
+      const w = img.naturalWidth * baseScale;
+      const h = img.naturalHeight * baseScale;
+      imgX = (W - w) / 2;
+      imgY = (H - h) / 2;
+
+      placeholder.classList.add('hidden');
+      dlBtn.disabled = false;
+      render();
+    }
+
+    function getScale() {
+      return W / wrapper.getBoundingClientRect().width;
+    }
+
+    // Mouse drag
+    wrapper.addEventListener('mousedown', (e) => {
+      if (!img) return;
+      dragging = true;
+      const s = getScale();
+      dragStartX = e.clientX * s; dragStartY = e.clientY * s;
+      imgStartX = imgX; imgStartY = imgY;
+    });
+    window.addEventListener('mousemove', (e) => {
+      if (!dragging) return;
+      const s = getScale();
+      imgX = imgStartX + (e.clientX * s - dragStartX);
+      imgY = imgStartY + (e.clientY * s - dragStartY);
+      render();
+    });
+    window.addEventListener('mouseup', () => { dragging = false; });
+
+    // Touch drag
+    wrapper.addEventListener('touchstart', (e) => {
+      if (!img || e.touches.length !== 1) return;
+      dragging = true;
+      const s = getScale();
+      dragStartX = e.touches[0].clientX * s; dragStartY = e.touches[0].clientY * s;
+      imgStartX = imgX; imgStartY = imgY;
+    }, { passive: true });
+    wrapper.addEventListener('touchmove', (e) => {
+      if (!dragging || e.touches.length !== 1) return;
+      e.preventDefault();
+      const s = getScale();
+      imgX = imgStartX + (e.touches[0].clientX * s - dragStartX);
+      imgY = imgStartY + (e.touches[0].clientY * s - dragStartY);
+      render();
+    }, { passive: false });
+    wrapper.addEventListener('touchend', () => { dragging = false; });
+
+    // Zoom
+    zoomSlider.addEventListener('input', (e) => {
+      if (!img) return;
+      const oldScale = baseScale * (imgScale / 100);
+      imgScale = parseInt(e.target.value);
+      const newScale = baseScale * (imgScale / 100);
+      const cx = W / 2, cy = H / 2;
+      imgX = cx - (cx - imgX) * (newScale / oldScale);
+      imgY = cy - (cy - imgY) * (newScale / oldScale);
+      render();
+    });
+
+    // Download
+    dlBtn.addEventListener('click', () => {
+      if (!img) return;
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        a.click();
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+    });
+
+    render();
+    return { setImage, render };
   }
 
-  // --- Load image ---
-  function loadImage(file) {
+  // Create both editors
+  const sq = createEditor('canvasSq', 'wrap1', 'placeholderSq', 'zoomSq', 'dlSq', 1080, 1080, 'kwd-barcamp-2026-1x1.png');
+  const vt = createEditor('canvasVt', 'wrap916', 'placeholderVt', 'zoomVt', 'dlVt', 1080, 1920, 'kwd-barcamp-2026-9x16.png');
+
+  // Shared upload
+  const fileInput = document.getElementById('fileInput');
+  const btnUpload = document.getElementById('btnUpload');
+
+  btnUpload.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', (e) => {
+    if (!e.target.files[0]) return;
+    loadFile(e.target.files[0]);
+  });
+
+  // Drag & drop on both wrappers + body
+  document.body.addEventListener('dragover', (e) => e.preventDefault());
+  document.body.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadFile(file);
+  });
+
+  function loadFile(file) {
     const reader = new FileReader();
-    reader.onload = function(e) {
+    reader.onload = function(ev) {
       const image = new Image();
       image.onload = function() {
-        img = image;
-        // Fit: cover the canvas
-        const scaleW = SIZE / img.naturalWidth;
-        const scaleH = SIZE / img.naturalHeight;
-        baseScale = Math.max(scaleW, scaleH);
-        imgScale = 100;
-        zoomSlider.value = 100;
-
-        // Center
-        const w = img.naturalWidth * baseScale;
-        const h = img.naturalHeight * baseScale;
-        imgX = (SIZE - w) / 2;
-        imgY = (SIZE - h) / 2;
-
-        placeholder.classList.add('hidden');
-        btnDownload.disabled = false;
-        render();
+        sq.setImage(image);
+        vt.setImage(image);
       };
-      image.src = e.target.result;
+      image.src = ev.target.result;
     };
     reader.readAsDataURL(file);
   }
-
-  // --- Upload ---
-  btnUpload.addEventListener('click', () => fileInput.click());
-  fileInput.addEventListener('change', (e) => {
-    if (e.target.files[0]) loadImage(e.target.files[0]);
-  });
-
-  // --- Drag & Drop ---
-  wrapper.addEventListener('dragover', (e) => { e.preventDefault(); });
-  wrapper.addEventListener('drop', (e) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) loadImage(file);
-  });
-
-  // --- Pan (mouse) ---
-  function getCanvasScale() {
-    return SIZE / wrapper.getBoundingClientRect().width;
-  }
-
-  wrapper.addEventListener('mousedown', (e) => {
-    if (!img) return;
-    dragging = true;
-    const s = getCanvasScale();
-    dragStartX = e.clientX * s;
-    dragStartY = e.clientY * s;
-    imgStartX = imgX;
-    imgStartY = imgY;
-  });
-
-  window.addEventListener('mousemove', (e) => {
-    if (!dragging) return;
-    const s = getCanvasScale();
-    imgX = imgStartX + (e.clientX * s - dragStartX);
-    imgY = imgStartY + (e.clientY * s - dragStartY);
-    render();
-  });
-
-  window.addEventListener('mouseup', () => { dragging = false; });
-
-  // --- Pan (touch) ---
-  wrapper.addEventListener('touchstart', (e) => {
-    if (!img || e.touches.length !== 1) return;
-    dragging = true;
-    const s = getCanvasScale();
-    dragStartX = e.touches[0].clientX * s;
-    dragStartY = e.touches[0].clientY * s;
-    imgStartX = imgX;
-    imgStartY = imgY;
-  }, { passive: true });
-
-  wrapper.addEventListener('touchmove', (e) => {
-    if (!dragging || e.touches.length !== 1) return;
-    e.preventDefault();
-    const s = getCanvasScale();
-    imgX = imgStartX + (e.touches[0].clientX * s - dragStartX);
-    imgY = imgStartY + (e.touches[0].clientY * s - dragStartY);
-    render();
-  }, { passive: false });
-
-  wrapper.addEventListener('touchend', () => { dragging = false; });
-
-  // --- Zoom ---
-  zoomSlider.addEventListener('input', (e) => {
-    if (!img) return;
-    const oldScale = baseScale * (imgScale / 100);
-    imgScale = parseInt(e.target.value);
-    const newScale = baseScale * (imgScale / 100);
-
-    // Zoom toward center
-    const cx = SIZE / 2;
-    const cy = SIZE / 2;
-    imgX = cx - (cx - imgX) * (newScale / oldScale);
-    imgY = cy - (cy - imgY) * (newScale / oldScale);
-
-    render();
-  });
-
-  // --- Download ---
-  btnDownload.addEventListener('click', () => {
-    if (!img) return;
-    canvas.toBlob((blob) => {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'kwd-barcamp-2026-ich-bin-dabei.png';
-      a.click();
-      URL.revokeObjectURL(url);
-    }, 'image/png');
-  });
-
-  // Initial render (empty state with frame preview)
-  render();
 })();
 </script>
 </body>
