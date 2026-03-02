@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KWD Barcamp 2026 – Ich bin dabei!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Roboto:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Roboto', sans-serif;
+    background: #f5f3f7;
+    color: #1a1a1a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .header {
+    width: 100%;
+    background: linear-gradient(135deg, #7a00df 0%, #5a00a8 100%);
+    color: #fff;
+    text-align: center;
+    padding: 2rem 1rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -30px;
+    right: -30px;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: rgba(242, 117, 73, 0.3);
+  }
+
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -20px;
+    left: 40px;
+    width: 80px;
+    height: 80px;
+    background: rgba(228, 252, 154, 0.2);
+    transform: rotate(45deg);
+  }
+
+  .header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: 0.02em;
+    position: relative;
+    z-index: 1;
+  }
+
+  .header p {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-top: 0.3rem;
+    position: relative;
+    z-index: 1;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 540px;
+    padding: 1.5rem 1rem 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+  }
+
+  .canvas-wrapper {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #e0d6e8;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    cursor: grab;
+    touch-action: none;
+    box-shadow: 0 4px 20px rgba(122, 0, 223, 0.15);
+  }
+
+  .canvas-wrapper:active { cursor: grabbing; }
+
+  .canvas-wrapper canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .placeholder {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    color: #7a00df;
+    pointer-events: none;
+    transition: opacity 0.3s;
+  }
+
+  .placeholder.hidden { opacity: 0; pointer-events: none; }
+
+  .placeholder svg { width: 48px; height: 48px; opacity: 0.5; }
+
+  .placeholder span {
+    font-size: 0.95rem;
+    opacity: 0.7;
+    text-align: center;
+    padding: 0 1rem;
+  }
+
+  .controls {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.85rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn:active { transform: scale(0.97); }
+
+  .btn-upload {
+    background: #7a00df;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(122, 0, 223, 0.3);
+  }
+
+  .btn-upload:hover { box-shadow: 0 5px 20px rgba(122, 0, 223, 0.4); }
+
+  .btn-download {
+    background: #f27549;
+    color: #fff;
+    box-shadow: 0 3px 12px rgba(242, 117, 73, 0.3);
+  }
+
+  .btn-download:hover { box-shadow: 0 5px 20px rgba(242, 117, 73, 0.4); }
+
+  .btn-download:disabled {
+    background: #ccc;
+    box-shadow: none;
+    cursor: not-allowed;
+  }
+
+  .zoom-row {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+  }
+
+  .zoom-row label {
+    font-size: 0.85rem;
+    color: #666;
+    white-space: nowrap;
+    min-width: 44px;
+  }
+
+  .zoom-row input[type="range"] {
+    flex: 1;
+    accent-color: #7a00df;
+    height: 6px;
+  }
+
+  .hint {
+    font-size: 0.8rem;
+    color: #999;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .hidden-input { display: none; }
+
+  .footer {
+    margin-top: auto;
+    padding: 1rem;
+    font-size: 0.75rem;
+    color: #aaa;
+    text-align: center;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .btn-row .btn { flex: 1; }
+
+  @media (max-width: 400px) {
+    .header h1 { font-size: 1.4rem; }
+    .container { padding: 1rem 0.75rem 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>KWD BARCAMP 2026</h1>
+  <p>Erstelle deinen persönlichen Teilnehmer-Frame!</p>
+</div>
+
+<div class="container">
+  <div class="canvas-wrapper" id="canvasWrapper">
+    <canvas id="canvas" width="1080" height="1080"></canvas>
+    <div class="placeholder" id="placeholder">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="3" y="3" width="18" height="18" rx="2"/>
+        <circle cx="8.5" cy="8.5" r="1.5"/>
+        <path d="M21 15l-5-5L5 21"/>
+      </svg>
+      <span>Foto hochladen oder hierher ziehen</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="btn-row">
+      <button class="btn btn-upload" id="btnUpload">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+        Foto wählen
+      </button>
+      <button class="btn btn-download" id="btnDownload" disabled>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+        PNG laden
+      </button>
+    </div>
+
+    <div class="zoom-row">
+      <label>Zoom</label>
+      <input type="range" id="zoomSlider" min="50" max="300" value="100" step="1">
+    </div>
+
+    <p class="hint">Bild per Drag verschieben &middot; Zoom per Slider &middot; Export: 1080&times;1080 px</p>
+  </div>
+
+  <input type="file" accept="image/*" class="hidden-input" id="fileInput">
+</div>
+
+<div class="footer">Deine Bilder bleiben in deinem Browser &ndash; nichts wird hochgeladen.</div>
+
+<script>
+(function() {
+  const SIZE = 1080;
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const wrapper = document.getElementById('canvasWrapper');
+  const placeholder = document.getElementById('placeholder');
+  const fileInput = document.getElementById('fileInput');
+  const btnUpload = document.getElementById('btnUpload');
+  const btnDownload = document.getElementById('btnDownload');
+  const zoomSlider = document.getElementById('zoomSlider');
+
+  let img = null;
+  let imgX = 0, imgY = 0;
+  let imgScale = 1;
+  let baseScale = 1;
+  let dragging = false;
+  let dragStartX = 0, dragStartY = 0;
+  let imgStartX = 0, imgStartY = 0;
+
+  // --- Frame drawing (SVG-based, drawn directly on canvas) ---
+  function drawFrame(ctx) {
+    const S = SIZE;
+    const border = 80;
+
+    // Semi-transparent border bands
+    ctx.save();
+
+    // Top band
+    ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
+    ctx.fillRect(0, 0, S, border + 20);
+
+    // Bottom band
+    ctx.fillStyle = 'rgba(122, 0, 223, 0.88)';
+    ctx.fillRect(0, S - border - 30, S, border + 30);
+
+    // Left strip
+    ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
+    ctx.fillRect(0, border + 20, 18, S - border * 2 - 50);
+
+    // Right strip
+    ctx.fillStyle = 'rgba(122, 0, 223, 0.55)';
+    ctx.fillRect(S - 18, border + 20, 18, S - border * 2 - 50);
+
+    // --- Geometric decorations ---
+    // Top-left circle (orange)
+    ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
+    ctx.beginPath();
+    ctx.arc(90, 50, 32, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Top-right diamond (yellow-green)
+    ctx.fillStyle = 'rgba(228, 252, 154, 0.9)';
+    ctx.save();
+    ctx.translate(S - 90, 50);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillRect(-20, -20, 40, 40);
+    ctx.restore();
+
+    // Bottom-left diamond (blue)
+    ctx.fillStyle = 'rgba(38, 141, 227, 0.8)';
+    ctx.save();
+    ctx.translate(80, S - 55);
+    ctx.rotate(Math.PI / 4);
+    ctx.fillRect(-18, -18, 36, 36);
+    ctx.restore();
+
+    // Bottom-right circle (orange)
+    ctx.fillStyle = 'rgba(242, 117, 73, 0.85)';
+    ctx.beginPath();
+    ctx.arc(S - 80, S - 55, 28, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Small accent dots
+    ctx.fillStyle = 'rgba(228, 252, 154, 0.7)';
+    ctx.beginPath();
+    ctx.arc(S / 2 - 160, 50, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(38, 141, 227, 0.6)';
+    ctx.beginPath();
+    ctx.arc(S / 2 + 160, 50, 10, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(228, 252, 154, 0.6)';
+    ctx.beginPath();
+    ctx.arc(S / 2 + 120, S - 55, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = 'rgba(38, 141, 227, 0.5)';
+    ctx.beginPath();
+    ctx.arc(S / 2 - 120, S - 55, 8, 0, Math.PI * 2);
+    ctx.fill();
+
+    // --- Text ---
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Top: "KWD BARCAMP 2026"
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '800 44px Poppins, sans-serif';
+    ctx.fillText('KWD BARCAMP 2026', S / 2, 55);
+
+    // Bottom: "ICH BIN DABEI!"
+    ctx.fillStyle = '#e4fc9a';
+    ctx.font = '800 48px Poppins, sans-serif';
+    ctx.fillText('ICH BIN DABEI!', S / 2, S - 52);
+
+    ctx.restore();
+  }
+
+  // --- Render ---
+  function render() {
+    ctx.clearRect(0, 0, SIZE, SIZE);
+
+    // Background
+    ctx.fillStyle = '#e0d6e8';
+    ctx.fillRect(0, 0, SIZE, SIZE);
+
+    if (img) {
+      const scale = baseScale * (imgScale / 100);
+      const w = img.naturalWidth * scale;
+      const h = img.naturalHeight * scale;
+      ctx.drawImage(img, imgX, imgY, w, h);
+    }
+
+    drawFrame(ctx);
+  }
+
+  // --- Load image ---
+  function loadImage(file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const image = new Image();
+      image.onload = function() {
+        img = image;
+        // Fit: cover the canvas
+        const scaleW = SIZE / img.naturalWidth;
+        const scaleH = SIZE / img.naturalHeight;
+        baseScale = Math.max(scaleW, scaleH);
+        imgScale = 100;
+        zoomSlider.value = 100;
+
+        // Center
+        const w = img.naturalWidth * baseScale;
+        const h = img.naturalHeight * baseScale;
+        imgX = (SIZE - w) / 2;
+        imgY = (SIZE - h) / 2;
+
+        placeholder.classList.add('hidden');
+        btnDownload.disabled = false;
+        render();
+      };
+      image.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // --- Upload ---
+  btnUpload.addEventListener('click', () => fileInput.click());
+  fileInput.addEventListener('change', (e) => {
+    if (e.target.files[0]) loadImage(e.target.files[0]);
+  });
+
+  // --- Drag & Drop ---
+  wrapper.addEventListener('dragover', (e) => { e.preventDefault(); });
+  wrapper.addEventListener('drop', (e) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) loadImage(file);
+  });
+
+  // --- Pan (mouse) ---
+  function getCanvasScale() {
+    return SIZE / wrapper.getBoundingClientRect().width;
+  }
+
+  wrapper.addEventListener('mousedown', (e) => {
+    if (!img) return;
+    dragging = true;
+    const s = getCanvasScale();
+    dragStartX = e.clientX * s;
+    dragStartY = e.clientY * s;
+    imgStartX = imgX;
+    imgStartY = imgY;
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (!dragging) return;
+    const s = getCanvasScale();
+    imgX = imgStartX + (e.clientX * s - dragStartX);
+    imgY = imgStartY + (e.clientY * s - dragStartY);
+    render();
+  });
+
+  window.addEventListener('mouseup', () => { dragging = false; });
+
+  // --- Pan (touch) ---
+  wrapper.addEventListener('touchstart', (e) => {
+    if (!img || e.touches.length !== 1) return;
+    dragging = true;
+    const s = getCanvasScale();
+    dragStartX = e.touches[0].clientX * s;
+    dragStartY = e.touches[0].clientY * s;
+    imgStartX = imgX;
+    imgStartY = imgY;
+  }, { passive: true });
+
+  wrapper.addEventListener('touchmove', (e) => {
+    if (!dragging || e.touches.length !== 1) return;
+    e.preventDefault();
+    const s = getCanvasScale();
+    imgX = imgStartX + (e.touches[0].clientX * s - dragStartX);
+    imgY = imgStartY + (e.touches[0].clientY * s - dragStartY);
+    render();
+  }, { passive: false });
+
+  wrapper.addEventListener('touchend', () => { dragging = false; });
+
+  // --- Zoom ---
+  zoomSlider.addEventListener('input', (e) => {
+    if (!img) return;
+    const oldScale = baseScale * (imgScale / 100);
+    imgScale = parseInt(e.target.value);
+    const newScale = baseScale * (imgScale / 100);
+
+    // Zoom toward center
+    const cx = SIZE / 2;
+    const cy = SIZE / 2;
+    imgX = cx - (cx - imgX) * (newScale / oldScale);
+    imgY = cy - (cy - imgY) * (newScale / oldScale);
+
+    render();
+  });
+
+  // --- Download ---
+  btnDownload.addEventListener('click', () => {
+    if (!img) return;
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kwd-barcamp-2026-ich-bin-dabei.png';
+      a.click();
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  });
+
+  // Initial render (empty state with frame preview)
+  render();
+})();
+</script>
+</body>
+</html>
