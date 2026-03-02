@@ -45,6 +45,9 @@
   .btn-dl{background:#f27549;color:#fff;box-shadow:0 3px 10px rgba(242,117,73,.3);font-size:.82rem;padding:.55rem .8rem}
   .btn-dl:hover{box-shadow:0 5px 16px rgba(242,117,73,.4)}
   .btn-dl:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
+  .btn-both{background:#268ce3;color:#fff;box-shadow:0 3px 10px rgba(38,140,227,.3);font-size:.88rem;padding:.7rem 1rem}
+  .btn-both:hover{box-shadow:0 5px 16px rgba(38,140,227,.4)}
+  .btn-both:disabled{background:#ccc;box-shadow:none;cursor:not-allowed}
   .hint{font-size:.72rem;color:#999;text-align:center;line-height:1.4;padding:0 1rem}
   .hidden-input{display:none}
   .footer{margin-top:auto;padding:.8rem;font-size:.72rem;color:#aaa;text-align:center}
@@ -100,6 +103,12 @@
       </button>
     </div>
   </div>
+</div>
+<div style="width:100%;max-width:960px;padding:0 1rem">
+  <button class="btn btn-both" id="dlBoth" disabled style="width:100%">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+    Beide PNGs herunterladen
+  </button>
 </div>
 <p class="hint">Bild per Drag verschieben · Zoom per Slider · Beide Formate unabhängig anpassbar</p>
 <div class="footer">Deine Bilder bleiben in deinem Browser – nichts wird hochgeladen.</div>
@@ -233,11 +242,30 @@ const FRAMES_VT = [
     var r=new FileReader();
     r.onload=function(ev){
       var i=new Image();
-      i.onload=function(){sq.setImage(i);vt.setImage(i)};
+      i.onload=function(){sq.setImage(i);vt.setImage(i);document.getElementById('dlBoth').disabled=false};
       i.src=ev.target.result;
     };
     r.readAsDataURL(file);
   }
+
+  document.getElementById('dlBoth').addEventListener('click',function(){
+    var c1=document.getElementById('cvSq');
+    var c2=document.getElementById('cvVt');
+    c1.toBlob(function(b1){
+      var u1=URL.createObjectURL(b1);
+      var a1=document.createElement('a');
+      a1.href=u1;a1.download='kwd-barcamp-2026-1x1.png';a1.click();
+      URL.revokeObjectURL(u1);
+      setTimeout(function(){
+        c2.toBlob(function(b2){
+          var u2=URL.createObjectURL(b2);
+          var a2=document.createElement('a');
+          a2.href=u2;a2.download='kwd-barcamp-2026-9x16.png';a2.click();
+          URL.revokeObjectURL(u2);
+        },'image/png');
+      },300);
+    },'image/png');
+  });
 })();
 </script>
 </body>
