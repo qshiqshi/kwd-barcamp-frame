@@ -1,0 +1,10 @@
+{
+  "name": "kwd-barcamp-frame",
+  "version": "1.0.0",
+  "description": "KWD Barcamp 2026 - Ich bin dabei! Frame Generator",
+  "private": true,
+  "scripts": {
+    "dev": "npx serve public -l 3000",
+    "start": "npx serve public -l ${PORT:-3000}"
+  }
+}
